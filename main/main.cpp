@@ -20,7 +20,9 @@
 
 static const char* TAG = "main";
 
-// Configuration from Kconfig
+// Configuration from Kconfig (with fallback defaults)
+#include "sdkconfig.h"
+
 #ifndef CONFIG_WIFI_SSID
 #define CONFIG_WIFI_SSID "your_ssid"
 #endif
@@ -34,7 +36,23 @@ static const char* TAG = "main";
 #endif
 
 #ifndef CONFIG_STREAM_FPS
-#define CONFIG_STREAM_FPS 3
+#define CONFIG_STREAM_FPS 8
+#endif
+
+#ifndef CONFIG_CAMERA_JPEG_QUALITY
+#define CONFIG_CAMERA_JPEG_QUALITY 12
+#endif
+
+#ifndef CONFIG_CAMERA_FRAME_BUFFERS
+#define CONFIG_CAMERA_FRAME_BUFFERS 2
+#endif
+
+#ifndef CONFIG_STREAM_BUFFER_SLOTS
+#define CONFIG_STREAM_BUFFER_SLOTS 4
+#endif
+
+#ifndef CONFIG_STREAM_MAX_FRAME_SIZE
+#define CONFIG_STREAM_MAX_FRAME_SIZE 102400
 #endif
 
 extern "C" void app_main() {
@@ -53,8 +71,8 @@ extern "C" void app_main() {
     // =========================================================================
     interfaces::CameraConfig cam_config;
     cam_config.resolution = interfaces::Resolution::VGA;
-    cam_config.jpeg_quality = 12;             // Good balance (10=best, 63=worst)
-    cam_config.frame_buffer_count = 2;
+    cam_config.jpeg_quality = CONFIG_CAMERA_JPEG_QUALITY;
+    cam_config.frame_buffer_count = CONFIG_CAMERA_FRAME_BUFFERS;
     
     if (!camera.init(cam_config)) {
         ESP_LOGE(TAG, "Camera init failed!");
@@ -84,9 +102,9 @@ extern "C" void app_main() {
     core::StreamingService streaming(camera, clock);
     
     core::StreamingConfig stream_config;
-    stream_config.target_fps = 8;             // 8 FPS - good balance
-    stream_config.buffer_slots = 4;           // 4 slots for safe margin
-    stream_config.max_frame_size = 100 * 1024;  // 100KB
+    stream_config.target_fps = CONFIG_STREAM_FPS;
+    stream_config.buffer_slots = CONFIG_STREAM_BUFFER_SLOTS;
+    stream_config.max_frame_size = CONFIG_STREAM_MAX_FRAME_SIZE;
     
     if (!streaming.init(stream_config)) {
         ESP_LOGE(TAG, "Streaming service init failed!");

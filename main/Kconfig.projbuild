@@ -1,29 +1,93 @@
 menu "WiFi Camera Configuration"
 
-    config WIFI_SSID
-        string "WiFi SSID"
-        default "your_ssid"
-        help
-            SSID (network name) to connect to.
+    menu "WiFi Settings"
+        config WIFI_SSID
+            string "WiFi SSID"
+            default "your_ssid"
+            help
+                SSID (network name) to connect to.
 
-    config WIFI_PASSWORD
-        string "WiFi Password"
-        default "your_password"
-        help
-            WiFi password (WPA2).
+        config WIFI_PASSWORD
+            string "WiFi Password"
+            default "your_password"
+            help
+                WiFi password (WPA2).
 
-    config MDNS_HOSTNAME
-        string "mDNS Hostname"
-        default "espcam"
-        help
-            mDNS hostname for the camera (access via hostname.local).
+        config WIFI_CONNECT_TIMEOUT_MS
+            int "WiFi Connection Timeout (ms)"
+            default 15000
+            range 5000 60000
+            help
+                Maximum time to wait for WiFi connection in milliseconds.
+    endmenu
 
-    config STREAM_FPS
-        int "Target Stream FPS"
-        default 3
-        range 1 15
-        help
-            Target frames per second for streaming.
-            Lower values are more stable. 3 FPS recommended.
+    menu "Network Settings"
+        config MDNS_HOSTNAME
+            string "mDNS Hostname"
+            default "espcam"
+            help
+                mDNS hostname for the camera (access via hostname.local).
+
+        config HTTP_SERVER_PORT
+            int "HTTP Server Port"
+            default 80
+            range 1 65535
+            help
+                Port for the HTTP server.
+    endmenu
+
+    menu "Camera Settings"
+        config CAMERA_JPEG_QUALITY
+            int "JPEG Quality"
+            default 12
+            range 10 63
+            help
+                JPEG compression quality. Lower = better quality, larger files.
+                10 = best quality, 63 = smallest files.
+                Recommended: 10-15 for high quality, 20-30 for balance.
+
+        config CAMERA_FRAME_BUFFERS
+            int "Camera DMA Frame Buffers"
+            default 2
+            range 1 3
+            help
+                Number of frame buffers for camera DMA.
+                More buffers = smoother capture but more memory.
+    endmenu
+
+    menu "Streaming Settings"
+        config STREAM_FPS
+            int "Target Stream FPS"
+            default 8
+            range 1 15
+            help
+                Target frames per second for streaming.
+                Higher values require more bandwidth and processing.
+                Recommended: 3-10 FPS.
+
+        config STREAM_BUFFER_SLOTS
+            int "Stream Buffer Slots"
+            default 4
+            range 2 8
+            help
+                Number of frame slots in the ring buffer.
+                More slots = smoother streaming but more PSRAM usage.
+
+        config STREAM_MAX_FRAME_SIZE
+            int "Max Frame Size (bytes)"
+            default 102400
+            range 51200 204800
+            help
+                Maximum size of a single JPEG frame in bytes.
+                Increase for higher resolutions or quality.
+                Default: 102400 (100KB)
+
+        config STREAM_CONSUMER_TIMEOUT_MS
+            int "Consumer Timeout (ms)"
+            default 1000
+            range 100 5000
+            help
+                How long a consumer waits for a new frame before timeout.
+    endmenu
 
 endmenu
