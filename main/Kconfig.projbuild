@@ -1,0 +1,29 @@
+menu "WiFi Camera Configuration"
+
+    config WIFI_SSID
+        string "WiFi SSID"
+        default "your_ssid"
+        help
+            SSID (network name) to connect to.
+
+    config WIFI_PASSWORD
+        string "WiFi Password"
+        default "your_password"
+        help
+            WiFi password (WPA2).
+
+    config MDNS_HOSTNAME
+        string "mDNS Hostname"
+        default "espcam"
+        help
+            mDNS hostname for the camera (access via hostname.local).
+
+    config STREAM_FPS
+        int "Target Stream FPS"
+        default 3
+        range 1 15
+        help
+            Target frames per second for streaming.
+            Lower values are more stable. 3 FPS recommended.
+
+endmenu

@@ -1,0 +1,17 @@
+idf_component_register(
+    SRCS
+        "main.cpp"
+    INCLUDE_DIRS
+        "."
+        "interfaces"
+        "drivers"
+        "core"
+    REQUIRES
+        esp_driver_gpio
+        esp_wifi
+        esp_http_server
+        esp_netif
+        esp_event
+        esp_timer
+        nvs_flash
+)
